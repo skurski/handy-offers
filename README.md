@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Handy Offers Web Application Guide
 
 ### Introduction
@@ -99,7 +98,3 @@
 - Google Maps Services
 - Bootstrap DateTimePicker
 - Bootstrap
-=======
-# handy-offers
-Handy Offers Web Application
->>>>>>> 7d1f282db673237217b7c2b5949688ec081340a3
