@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.admin.user.title}">Users list</title>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <div class="content">
+        <!--/*/ <th:block th:include="admin/main :: admin-menu"></th:block> /*/-->
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <div class="col-md-9">
+                <div class="alert alert-success" role="alert" th:if="${success}"
+                     th:text="#{offer.admin.edited}">Changes was saved.
+                </div>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th th:text="#{offer.title}">Title</th>
+                        <th th:text="#{offer.category}">Category</th>
+                        <th th:text="#{offer.start}">Start date</th>
+                        <th th:text="#{offer.end}">End date</th>
+                        <th th:text="#{offer.email}">Email</th>
+                        <th th:text="#{offer.reported}">Reported</th>
+                        <th th:text="#{offer.banned}">Banned</th>
+                        <th th:text="#{offer.goto}">Go to</th>
+                        <th th:text="#{update}">Update</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${not #lists.isEmpty(offers)}">
+                    <tr th:each="offer : ${offers}">
+                        <form th:action="@{/admin/offer/update}" method="post">
+                            <td th:text="${offer.title}">Przeglad przedzakupowy</td>
+                            <td th:text="${offer.categoryName}">Motoryzacja</td>
+                            <td th:text="${offer.startDate}">2017-03-03 12:44</td>
+                            <td th:text="${offer.endDate}">2017-04-03 12:44</td>
+                            <td th:text="${offer.email}">peter@gmail.com</td>
+                            <td><input type="checkbox" th:checked="${offer.reported} == 1" disabled="disabled"/></td>
+                            <td><input type="checkbox" name="banned" th:checked="${offer.banned} == 1" value="1"/></td>
+                            <input type="hidden" name="offerId" th:value="${offer.id}"/>
+                            <td><a th:href="@{/offer/details/{id}(id=${offer.id})}" th:text="#{offer.goto}">Click</a></td>
+                            <td><input type="submit" class="btn btn-primary" th:value="#{update}"/></td>
+                        </form>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </sec:authorize>
+    </div> <!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+</div> <!-- /container -->
+
+</body>
+</html>

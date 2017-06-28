@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title>403 Forbidden</title>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <div class="col-md-12">
+        <div class="alert alert-danger" role="alert" th:text="#{forbidden.alert}">
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" class="btn btn-primary" value="Logout" th:value="#{forbidden.logout}"/>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
+    </div>
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+
+</div> <!-- /container -->
+
+<!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+
+</body>
+</html>

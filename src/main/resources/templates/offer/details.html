@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.offer.details.title}">Manage your offers</title>
+    <!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/template :: search"></th:block> /*/-->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!--/*/ <th:block th:include="fragments/template :: usermenu"></th:block> /*/-->
+
+        <div class="offer-details"
+             th:classappend="${#authorization.expression('isAnonymous()')} ? col-md-12 : col-md-9">
+            <div class="alert alert-danger" role="alert" th:if="${thresholdAlert}"
+                 th:text="#{offer.threshold.alert}">You rating is too low to register!
+            </div>
+            <a sec:authorize="isAuthenticated()" class="pull-right btn btn-warning"
+               th:href="@{/offer/report/{id}(id=${offer.id})}"
+               th:if="${offer.reported} == 0"
+               th:text="#{offer.report.button}">Report</a>
+            <h1 th:text="${offer.title}"></h1>
+            <p th:text="${offer.content}"></p>
+            <p><span th:text="#{offer.address}">Address:</span>:&nbsp;<span th:text="${offer.getFullAddress()}"></span></p>
+            <p><span th:text="#{offer.phone}">Phone:</span>:&nbsp;<span th:text="${offer.phone}"></span></p>
+            <p><span th:text="#{offer.email}">Email:</span>:&nbsp;<span th:text="${offer.email}"></span></p>
+            <p><span th:text="#{offer.start}">Start date:</span>:&nbsp;<span th:text="${offer.startDate}"></span></p>
+            <p><span th:text="#{offer.end}">End date:</span>:&nbsp;<span th:text="${offer.endDate}"></span></p>
+            <p><span th:text="#{offer.category}">Category:</span>:&nbsp;<span th:text="${offer.categoryName}"></span></p>
+            <p><strong><span th:text="#{offer.rating}">Rating:</span>:&nbsp;<span th:text="${offer.rating}">
+                </span>&nbsp;&#37;</strong></p>
+            <p><span th:text="#{offer.opinions.number}">Number of opinions:</span>:&nbsp;
+                <span th:text="${#lists.size(offer.opinions)}"></span></p>
+            <p><span th:text="#{offer.details.threshold}">Threshold:</span>:&nbsp;
+                <span th:text="${offer.threshold}"></span>&nbsp;&#37;</p>
+            <h3  th:text="#{offer.schedule}">Schedule</h3>
+            <div id="day-schedule"></div>
+            <div class="spacer"></div>
+            <div class="col-md-1"></div>
+            <div class="col-md-6">
+                <div sec:authorize="isAuthenticated()">
+                    <form th:action="@{/offer/reserve}" method="post">
+                        <div class="form-group row" th:if="${not #lists.isEmpty(offer.appointments)}">
+                            <label for="appointmentId"  th:text="#{offer.appointment.date}">Choose appointment date:</label>
+                            <select class="form-control" name="appointmentId" id="appointmentId">
+                                <option value="0" th:disabled="disabled"
+                                        th:selected="selected" th:text="#{offer.appointment}">Choose an appointment
+                                </option>
+                                <option th:each="appointment : ${offer.appointments}"
+                                        th:value="${appointment.getId()}"
+                                        th:text="${appointment.print()}"/>
+                            </select>
+                            <input type="hidden" name="userId" th:value="${#authentication.principal?.id}"/>
+                            <input type="hidden" name="offerId" th:value="${offer.id}"/>
+                            <input type="hidden" name="schedulerId" th:value="${offer.schedulerId}"/>
+                            <div class="spacer"></div>
+                            <button type="submit" class="btn btn-primary" th:text="#{page.offer.details.submit}">
+                                Reserve appointment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="clearfix"></div>
+            <h4  th:text="#{offer.opinions}">Opinions</h4>
+            <div class="opinions">
+                <div class="opinion" th:if="${#lists.isEmpty(offer.opinions)}" th:text="#{offer.opinions.no}"></div>
+                <div class="opinion" th:each="opinion : ${offer.opinions}" th:text="${opinion}"/>
+            </div>
+        </div>
+
+    </div><!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+
+</div> <!-- /container -->
+
+</body>
+</html>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    (function ($) {
+        var now = new Date([[${offer.startDate}]]);
+        var json = JSON.parse([[${offer.scheduler}]]);
+        var month = [];
+        month[0] = "January";
+        month[1] = "February";
+        month[2] = "March";
+        month[3] = "April";
+        month[4] = "May";
+        month[5] = "June";
+        month[6] = "July";
+        month[7] = "August";
+        month[8] = "September";
+        month[9] = "October";
+        month[10] = "November";
+        month[11] = "December";
+
+        var dates = [];
+        dates[0] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[1] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[2] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[3] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[4] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[5] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[6] = now.getDate() + " " + month[now.getMonth()];
+
+        $("#day-schedule").dayScheduleSelector({
+            stringDays: dates
+        });
+        $("#day-schedule").data('artsy.dayScheduleSelector').deserialize(json);
+    })($);
+    /*]]>*/
+</script>

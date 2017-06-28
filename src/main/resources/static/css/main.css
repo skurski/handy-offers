@@ -1,0 +1,76 @@
+#map {
+    height: 400px;
+    width: 800px;
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.spacer {
+    margin:0;
+    padding:0;
+    height:20px;
+}
+
+.form-error {
+    color: #d9534f;
+}
+
+.offer {
+    border: 1px solid #eee;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.opinion {
+    border: 1px solid #eee;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.logout {
+    margin-top: -7px;
+    margin-bottom: -5px;
+}
+
+.table > thead > tr > th {
+    border-bottom: 0px;
+}
+
+/* make sidebar nav vertical */
+@media (min-width: 768px) {
+    .sidebar-nav .navbar .navbar-collapse {
+        padding: 0;
+        max-height: none;
+    }
+    .sidebar-nav .navbar ul {
+        float: none;
+        display: block;
+    }
+    .sidebar-nav .navbar li {
+        float: none;
+        display: block;
+    }
+    .sidebar-nav .navbar li a {
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+}
+
+.offer-details {
+    border: 1px solid #eee;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.offer-details p {
+    border-bottom: 1px solid #eee;
+}

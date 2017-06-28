@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.admin.category.title}">Users list</title>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <div class="content">
+        <!--/*/ <th:block th:include="admin/main :: admin-menu"></th:block> /*/-->
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <div class="col-md-9">
+                    <div class="alert alert-success" role="alert" th:if="${categoryEmpty}" th:text="#{admin.category.alert}">>
+                        <strong>Forbidden!</strong> Cannot delete not empty category.
+                    </div>
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th th:text="#{admin.category.name}">Category Name</th>
+                            <th th:text="#{admin.category.delete}">Delete</th>
+                            <th th:text="#{update}">Update</th>
+                        </tr>
+                        </thead>
+                        <tbody th:if="${not #lists.isEmpty(categories)}">
+                        <tr th:each="category : ${categories}">
+                            <form th:action="@{/admin/category/update}" method="post">
+                                <td><input type="text" name="name" th:value="${category.name}" value="Motoryzacja"/>
+                                </td>
+                                <td><input type="checkbox" name="delete" value="true"/></td>
+                                <td><input type="submit" class="btn btn-primary" th:value="#{update}"/></td>
+                                <input type="hidden" name="id" th:value="${category.id}"/>
+                            </form>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="spacer"></div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-6">
+                        <form th:action="@{/admin/category/add}" method="post">
+                            <div class="form-group row">
+                                <label for="name" th:text="#{admin.category.name}"></label>
+                                <input type="text" class="form-control" id="name" name="name"/>
+                                <div class="spacer"></div>
+                                <input type="submit" class="btn btn-primary" th:value="#{add}"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
+        </sec:authorize>
+    </div> <!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+</div> <!-- /container -->
+
+</body>
+</html>

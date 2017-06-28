@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.offer.manage.title}">Manage your offers</title>
+    <!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/template :: search"></th:block> /*/-->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!--/*/ <th:block th:include="fragments/template :: usermenu"></th:block> /*/-->
+
+        <div class="col-md-9">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="alert alert-success" role="alert" th:if="${success}" th:text="#{user.account.edit}">
+                    Your settings were updated.
+                </div>
+
+                <form th:action="@{/user/account/edit}" th:object="${userDto}" method="post">
+                    <div class="form-group row">
+                        <label th:text="#{form.email.label}">Email</label>
+                        <span class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                        <input type="email" class="form-control" th:field="*{email}" name="email"/>
+                    </div>
+                    <div class="form-group row">
+                        <label th:text="#{form.firstname.label}">First name</label>
+                        <span class="form-error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span>
+                        <input class="form-control" type="text" name="firstName" th:field="*{firstName}"/>
+                    </div>
+                    <div class="form-group row">
+                        <label th:text="#{form.lastname.label}">Last name</label>
+                        <span class="form-error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span>
+                        <input class="form-control" type="text" name="lastName" th:field="*{lastName}"/>
+                    </div>
+                    <div class="form-group row">
+                        <label th:text="#{form.username.label}">Username</label>
+                        <span class="form-error" th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}"></span>
+                        <input class="form-control" type="text" name="userName" th:field="*{userName}"/>
+                    </div>
+                    <div class="form-group row">
+                        <label th:text="#{form.enabled.label}">Enabled</label>&nbsp;
+                        <input type="checkbox" id="enabled" th:checked="${userDto.enabled} == 1" disabled="disabled"/>
+                    </div>
+                    <div class="form-group row">
+                        <label for="banned" th:text="#{form.banned.label}">Banned</label>&nbsp;
+                        <input type="checkbox" id="banned" th:checked="${userDto.banned} == 1" disabled="disabled"/>
+
+                    </div>
+                    <div class="form-group row">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <input type="hidden" name="id" th:value="${userDto.id}"/>
+                        <button type="submit" class="btn btn-primary" th:text="#{user.account.submit}">Update</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+    </div><!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+
+</div> <!-- /container -->
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.admin.title}">This is admin page!</title>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <div class="content">
+        <div th:fragment="admin-menu">
+            <sec:authorize access="hasRole('ROLE_ADMIN')">
+                <div class="col-md-3">
+                    <div class="list-group">
+                        <a href="#" th:href="@{/admin/user/list}" class="list-group-item list-group-item-action"
+                           th:text="#{admin.menu.users}">Users list</a>
+                        <a href="#" th:href="@{/admin/category/list}" class="list-group-item list-group-item-action"
+                           th:text="#{admin.menu.categories}">Categories</a>
+                        <a href="#" th:href="@{/admin/offer/reported}" class="list-group-item list-group-item-action"
+                           th:text="#{admin.menu.offer}">Invalid offers</a>
+                    </div>
+                </div>
+            </sec:authorize>
+        </div>
+        <div class="col-md-9"></div>
+    </div> <!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+</div> <!-- /container -->
+
+</body>
+</html>

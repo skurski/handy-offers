@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.offer.reservation.title}">Manage your offers</title>
+    <!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/template :: search"></th:block> /*/-->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!--/*/ <th:block th:include="fragments/template :: usermenu"></th:block> /*/-->
+
+        <div class="col-md-9">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th th:text="#{offer.offer.title}">Offer title</th>
+                    <th th:text="#{offer.reservation.date}">Reservation date</th>
+                    <th th:text="#{offer.goto}">Go to</th>
+                    <th th:unless="${feedback}" th:text="#{offer.cancel}">Cancel</th>
+                    <th th:if="${feedback}" th:text="#{offer.feedback}">Feedback</th>
+                </tr>
+                </thead>
+                <tbody th:if="${not #lists.isEmpty(userReservations)}">
+                <tr th:each="reservation : ${userReservations}">
+                    <form th:action="@{/offer/reserve/cancel}" method="post">
+                        <td th:text="${reservation.offerTitle}">tytul</td>
+                        <td th:text="${reservation.appointmentDetails}">data</td>
+                        <td><a th:href="@{/offer/details/{id}(id=${reservation.offerId})}"
+                               th:text="#{offer.goto}">Click</a></td>
+                        <td th:unless="${feedback}"><button type="submit" class="btn btn-primary"
+                                    th:text="#{offer.cancel}">Cancel</button></td>
+                        <input type="hidden" name="id" th:value="${reservation.getId()}"/>
+                        <input type="hidden" name="offerId" th:value="${reservation.offerId}"/>
+                        <input type="hidden" name="schedulerId" th:value="${reservation.schedulerId}"/>
+                        <input type="hidden" name="appointmentId" th:value="${reservation.appointmentId}"/>
+                    </form>
+                    <form th:action="@{/offer/opinion/form}" method="post">
+                        <input type="hidden" name="offerId" th:value="${reservation.offerId}"/>
+                        <td th:if="${feedback}"><input type="submit" class="btn btn-primary"
+                                                       th:value="#{offer.feedback.opinion}"/></td>
+                    </form>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+
+</div> <!-- /container -->
+
+</body>
+</html>

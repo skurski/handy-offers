@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="30 seconds">
+
+    <property name="LOG_PATH" value="/home/psk/logs" />
+    <property name="LOG_ARCHIVE" value="${LOG_PATH}/archive" />
+    <timestamp key="timestamp-by-second" datePattern="yyyyMMdd'T'HHmmss"/>
+
+    <appender name="Console-Appender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{YYYY-mm-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="File-Appender" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/logfile-${timestamp-by-second}.log</file>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{YYYY-mm-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <outputPatternAsHeader>true</outputPatternAsHeader>
+        </encoder>
+    </appender>
+
+    <logger name="pl.edu.agh.handy.offers"  level="debug" additivity="false">
+        <appender-ref ref="Console-Appender" />
+        <appender-ref ref="File-Appender" />
+    </logger>
+
+    <logger name="org.springframework.web" level="WARN" additivity="false" >
+        <appender-ref ref="Console-Appender"/>
+    </logger>
+
+    <logger name="org.springframework.boot" level="WARN" additivity="false" >
+        <appender-ref ref="Console-Appender"/>
+    </logger>
+
+    <logger name="org.hibernate" level="debug" additivity="false" >
+        <appender-ref ref="Console-Appender"/>
+    </logger>
+
+    <root level="debug">
+        <appender-ref ref="Console-Appender" />
+    </root>
+
+</configuration>

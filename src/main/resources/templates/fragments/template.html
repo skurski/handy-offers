@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">-->
+<html th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<!-- TEMPLATE (FRAGMENT) FOR HEAD, INCLUDE IN ALL HTML FILES -->
+<head lang="pl" th:fragment="head">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Header Fragment</title>
+    <!-- Bootstrap core CSS -->
+    <link th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}" href="../../static/bootstrap-3.3.7/css/bootstrap.min.css"
+          rel="stylesheet"/>
+    <link th:href="@{/bootstrap-3.3.7/css/bs-datepicker.min.css}"
+          href="../../static/bootstrap-3.3.7/css/bs-datepicker.min.css" rel="stylesheet"/>
+    <link th:href="@{/css/day-schedule-selector.css}" href="../../static/css/day-schedule-selector.css"
+          rel="stylesheet"/>
+    <!-- Application core CSS -->
+    <link th:href="@{/css/main.css}" href="../../static/css/main.css" rel="stylesheet"/>
+</head>
+<!-- END OF HEAD FRAGMENT -->
+
+<body>
+<!--TEMPLATE (FRAGMENT) FOR HEADER, INCLUDE IN ALL HTML FILES -->
+<nav class="navbar navbar-inverse" th:fragment="header">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/}" th:text="#{header.title}" href="#">Handy Offers</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul sec:authorize="hasAuthority('ROLE_ADMIN')" class="nav navbar-nav">
+                <li><a th:href="@{/admin}" th:text="#{header.admin}" href="#">Admin</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a sec:authorize="isAnonymous()" th:href="@{/user/register}" th:text="#{header.register}" href="#">Register</a>
+                </li>
+                <li><a sec:authorize="isAnonymous()" th:href="@{/login}" th:text="#{header.login}" href="#">Login</a>
+                </li>
+                <li><a sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" class="logout btn btn-primary" th:value="#{header.logout}" value="Logout"/>
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    </form>
+                </a>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<!-- END OF HEADER FRAGMENT -->
+
+<div class="container">
+    <!-- TEMPLATE (FRAGMENT) FOR SMART SEARCH INPUT -->
+    <div th:fragment="search">
+        <div class="col-md-12">
+            <form class="form-inline" role="form" th:action="@{/smartsearch/search}" method="post">
+                <input type="text" name="keywords" class="form-control" th:placeholder="#{smartsearch.search}"
+                       placeholder="Search"/>
+                <input type="text" class="form-control" id="smartsearch" th:placeholder="#{smartsearch.location}"
+                       placeholder="Location"
+                       onFocus="geolocate()"/>
+                <select class="form-control" id="radius" name="radiusValue">
+                    <option th:each="radius : ${T(pl.edu.agh.handy.offers.model.Radius).values()}"
+                            th:value="${radius.getValue()}"
+                            th:text="${radius.getDescription()}">1 km
+                    </option>
+                </select>
+                <select class="form-control" th:if="${not #lists.isEmpty(categories)}" id="categoryId"
+                        name="categoryId">
+                    <option th:value="0" th:selected="selected" th:text="#{smartsearch.all_categories}">All categories
+                    </option>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.getId()}"
+                            th:text="${category.getName()}"/>
+                </select>
+                <input type="text" class="form-control" id="fromDate" name="fromDate"
+                       th:placeholder="#{smartsearch.from_date}" placeholder="From date"/>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#fromDate').datetimepicker({
+                            format: 'YYYY-MM-DD HH:mm'
+                        });
+                    });
+                </script>
+                <input type="text" class="form-control" id="toDate" name="toDate"
+                       th:placeholder="#{smartsearch.to_date}" placeholder="To date"/>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#toDate').datetimepicker({
+                            format: 'YYYY-MM-DD HH:mm'
+                        });
+                    });
+                </script>
+                <button class="btn btn-default" type="Search">
+                    <i class="glyphicon glyphicon-search"></i>
+                </button>
+                <input type="hidden" id="search-latitude" name="latitude"/>
+                <input type="hidden" id="search-longitude" name="longitude"/>
+            </form>
+        </div>
+    </div>
+    <!-- END OF SMART SEARCH -->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!-- TEMPLATE (FRAGMENT) FOR USER MENU, DISPLAY IF USER AUTHENTICATED -->
+        <div th:fragment="usermenu">
+            <div class="usermenu" sec:authorize="isAuthenticated()">
+                <div class="col-md-3">
+                    <div class="list-group">
+                        <a href="#" th:href="@{/offer/add}" class="list-group-item list-group-item-action"
+                           th:text="#{usermenu.add_offer}">Add offer</a>
+                        <a href="#" th:href="@{/offer/manage}" class="list-group-item list-group-item-action"
+                           th:text="#{usermenu.your_offers}">Your
+                            offers</a>
+                        <a href="#" th:href="@{/offer/reserve/manage}" class="list-group-item list-group-item-action"
+                           th:text="#{usermenu.reservations}">Reservations</a>
+                        <a href="#" th:href="@{/offer/feedback}"
+                           class="list-group-item list-group-item-action" th:text="#{usermenu.feedback}">Feedback</a>
+                        <a href="#" th:href="@{/user/account}"
+                           class="list-group-item list-group-item-action" th:text="#{usermenu.account}">Account</a>
+                        <form th:action="@{/user/remove}" method="post">
+                            <button type="submit" class="list-group-item list-group-item-action list-group-item-danger"
+                                    th:text="#{usermenu.remove.account}">Remove account
+                            </button>
+                            <input type="hidden" name="id" th:value="${#authentication.principal?.id}"/>
+                            <input type="hidden" name="password"
+                                   th:value="${#authentication.principal?.password}"/>
+                            <input type="hidden" name="userName"
+                                   th:value="${#authentication.principal?.userName}"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF USER MENU FRAGMENT -->
+
+        <div class="col-md-9">
+            <div class="offer">
+                <h2>Heading</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            </div>
+            <div class="offer">
+                <h2>Heading</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
+                    inalue="
+                    culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            </div>
+            <div class="offer">
+                <h2>Heading</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+            </div>
+        </div>
+
+    </div> <!-- /content -->
+
+    <!-- TEMPLATE (FRAGMENT) FOR FOOTER, INCLUDE IN ALL HTML FILES -->
+    <footer th:fragment="footer">
+        <div class="clear"></div>
+        <div class="col-md-12">
+            <hr/>
+            <p>&copy; <span th:text="#{footer.copy}"></span></p>
+        </div>
+    </footer>
+    <!-- END OF FOOTER FRAGMENT -->
+
+</div> <!-- /container -->
+
+<!-- FRAGMENT WITH JAVASCRIPT SCRIPTS TO INCLUDE IN ALL HTML FILES -->
+<!--/*/ <th:block th:fragment="scripts">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDf329HPR1TrjSvRjDAwidT8Ikg4EAnLHk&amp;libraries=places&amp;language=pl&amp;region=pl"></script>
+
+    <script src="/bootstrap-3.3.7/js/moment.js"></script>
+    <script src="/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="/bootstrap-3.3.7/js/bs-datepicker.min.js"></script>
+
+    <script src="/js/locationpicker.jquery.min.js"></script>
+    <script src="/js/smartsearch.js"></script>
+    <script src="/js/day-schedule-selector.js"></script>
+</th:block> /*/-->
+<!-- END OF JAVASCRIPT FRAGMENT -->
+
+</body>
+</html>

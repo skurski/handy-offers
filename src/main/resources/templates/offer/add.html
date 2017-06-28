@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.offer.add.title}">This is user page!</title>
+    <!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/template :: search"></th:block> /*/-->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!--/*/ <th:block th:include="fragments/template :: usermenu"></th:block> /*/-->
+
+    <div class="col-md-9">
+        <form th:action="@{/offer/add}" th:object="${offerDto}" method="post">
+            <div class="form-group row">
+                <label for="title" th:text="#{offer.title}">Title</label>
+                <span class="form-error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+                <input type="text" class="form-control" id="title" placeholder="title" name="title"
+                       value="Odzyskiwanie danych z dysków twardych"/>
+            </div>
+            <div class="form-group row">
+                <label for="content" th:text="#{offer.content}">Content:</label>
+                <span class="form-error" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></span>
+                <textarea class="form-control" rows="5" id="content" name="content">
+                    Z racji amatorskiego doświadcznenia w dziedzinie informatyki stosowanej chętnie pomogę przy
+                    odzyskiwaniu danych w przypadku zniszczenia lub uszkodzenia dysku twardego.
+                </textarea>
+            </div>
+            <div class="form-group row">
+                <label for="startDate"  th:text="#{offer.start}">Start date:</label>
+                <span class="form-error" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></span>
+                <div class='input-group date' id='startDate'>
+                    <input type='text' class="form-control" name="startDate"/>
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    var defaultStart = new Date();
+                    $('#startDate').datetimepicker({
+                        format: 'YYYY-MM-DD HH:mm',
+                        defaultDate: defaultStart
+                    });
+                });
+            </script>
+            <div class="form-group row">
+                <label for="endDate" th:text="#{offer.end}">End date:</label>
+                <span class="form-error" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></span>
+                <div class='input-group date' id='endDate'>
+                    <input type='text' class="form-control" name="endDate"/>
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-time"></span>
+                                            </span>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function () {
+                    var defaultEnd = new Date();
+                    defaultEnd.setDate(defaultEnd.getDate() + 7);
+                    $('#endDate').datetimepicker({
+                        format: 'YYYY-MM-DD HH:mm',
+                        defaultDate: defaultEnd
+                    });
+                });
+            </script>
+            <div class="form-group row">
+                <label for="categoryId"  th:text="#{offer.category}">Category:</label>
+                <select class="form-control" name="categoryId" th:if="${not #lists.isEmpty(categories)}">>
+                    <!--<option value="" th:disabled="disabled"-->
+                            <!--th:selected="selected">Choose a category-->
+                    <!--</option>-->
+                    <option th:each="category : ${categories}"
+                            th:value="${category.getId()}"
+                            th:text="${category.getName()}"/>
+                </select>
+            </div>
+
+            <div class="form-group row">
+                <label for="threshold" th:text="#{offer.add.threshold}">Threshold</label>
+                <span class="form-error" th:if="${#fields.hasErrors('threshold')}" th:errors="*{threshold}"></span>
+                <input type="text" class="form-control" id="threshold" name="threshold" value="50"/>
+            </div>
+
+            <div class="form-group row">
+                <label for="address"  th:text="#{offer.location}">Location:</label>
+                <input type="text" class="form-control" id="address" placeholder="Enter a location"
+                       autocomplete="off" value="Mistrzejowice"/>
+            </div>
+            <div id="gmap" style="width: 550px; height: 400px; position: relative; overflow: hidden;"></div>
+            <input type="hidden" name="latitude" id="latitude"/>
+            <input type="hidden" name="longitude" id="longitude"/>
+
+            <script>
+                $('#gmap').locationpicker({
+                    location: {
+                        latitude: 50.0646501,
+                        longitude: 19.9449799
+                    },
+                    locationName: "",
+                    radius: 500,
+                    zoom: 12,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    styles: [],
+                    mapOptions: {},
+                    scrollwheel: true,
+                    inputBinding: {
+                        latitudeInput: $('#latitude'),
+                        longitudeInput: $('#longitude'),
+                        radiusInput: $('#radius'),
+                        locationNameInput: $('#address')
+                    },
+                    enableAutocomplete: true,
+                    enableAutocompleteBlur: false,
+                    autocompleteOptions: null,
+                    addressFormat: 'route',
+                    enableReverseGeocode: true,
+                    draggable: true,
+//                        onchanged: function(currentLocation, radius, isMarkerDropped) {},
+                    onchanged: function (currentLocation, radius, isMarkerDropped) {
+                        var addressComponents = $(this).locationpicker('map').location.addressComponents;
+                        $('#street').val(addressComponents.streetName);
+                        $('#number').val(addressComponents.streetNumber);
+                        $('#city').val(addressComponents.city);
+                        $('#postcode').val(addressComponents.postalCode);
+                    },
+                    onlocationnotfound: function (locationName) {
+                    },
+                    oninitialized: function (component) {
+                    },
+                    // must be undefined to use the default gMaps marker
+                    markerIcon: undefined,
+                    markerDraggable: true,
+                    markerVisible: true
+                });
+            </script>
+
+            <div class="clearfix"></div>
+
+            <div class="form-group row">
+                <label for="street" th:text="#{offer.street}">Street</label>
+                <span class="form-error" th:if="${#fields.hasErrors('street')}" th:errors="*{street}"></span>
+                <input type="text" class="form-control" id="street" placeholder="street" name="street"
+                 value="Mistrzejowicka"/>
+            </div>
+            <div class="form-group row">
+                <label for="number" th:text="#{offer.number}">Number</label>
+                <span class="form-error" th:if="${#fields.hasErrors('number')}" th:errors="*{number}"></span>
+                <input type="text" class="form-control" id="number" placeholder="number" name="number"
+                value="125/4"/>
+            </div>
+            <div class="form-group row">
+                <label for="phone" th:text="#{offer.phone}">Phone</label>
+                <span class="form-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></span>
+                <input type="text" class="form-control" id="phone" placeholder="phone" name="phone"
+                value="880-224-766"/>
+            </div>
+            <div class="form-group row">
+                <label for="email" th:text="#{offer.email}">Email</label>
+                <span class="form-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                <input type="email" class="form-control" id="email" placeholder="email" name="email"
+                value="testowy@wp.pl"/>
+            </div>
+            <div class="form-group row">
+                <label for="day-schedule"  th:text="#{offer.schedule}">Schedule</label>
+                <span class="form-error" th:if="${#fields.hasErrors('scheduler')}" th:errors="*{scheduler}"></span>
+                <div id="day-schedule"></div>
+            </div>
+
+            <!-- HIDDEN INPUTS -->
+            <input type="hidden" name="postcode" id="postcode" value="33-999"/>
+            <input type="hidden" name="city" id="city" value="Krakow"/>
+            <input type="hidden" name="scheduler" id="scheduler"/>
+
+            <div class="form-group row">
+                <button type="submit" class="btn btn-primary"  th:text="#{offer.add}">Add offer</button>
+            </div>
+        </form>
+    </div>
+
+</div><!-- /content -->
+
+<!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+
+</div> <!-- /container -->
+</body>
+</html>
+
+<script>
+    (function ($) {
+        var now = new Date();
+        var month = [];
+        month[0] = "January";
+        month[1] = "February";
+        month[2] = "March";
+        month[3] = "April";
+        month[4] = "May";
+        month[5] = "June";
+        month[6] = "July";
+        month[7] = "August";
+        month[8] = "September";
+        month[9] = "October";
+        month[10] = "November";
+        month[11] = "December";
+
+        var dates = [];
+        dates[0] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[1] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[2] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[3] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[4] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[5] = now.getDate() + " " + month[now.getMonth()];
+        now.setDate(now.getDate() + 1);
+        dates[6] = now.getDate() + " " + month[now.getMonth()];
+
+        $("#day-schedule").dayScheduleSelector({
+            stringDays  : dates
+        });
+        $("#day-schedule").on('selected.artsy.dayScheduleSelector', function (e, selected) {
+            var object = $("#day-schedule").data('artsy.dayScheduleSelector').serialize();
+            $('#scheduler').val(JSON.stringify(object));
+        });
+    })($);
+</script>

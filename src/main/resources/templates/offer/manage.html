@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title th:text="#{page.offer.manage.title}">Manage your offers</title>
+    <!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/template :: search"></th:block> /*/-->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!--/*/ <th:block th:include="fragments/template :: usermenu"></th:block> /*/-->
+
+        <div class="col-md-9">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th th:text="#{offer.title}">Title</th>
+                    <th th:text="#{offer.category}">Category</th>
+                    <th th:text="#{offer.start}">Start date</th>
+                    <th th:text="#{offer.end}">End date</th>
+                    <th th:text="#{offer.email}">Email</th>
+                    <th th:text="#{offer.goto}">Go to</th>
+                    <th th:text="#{offer.edit}">Edit</th>
+                </tr>
+                </thead>
+                <tbody th:if="${not #lists.isEmpty(userOffers)}">
+                <tr th:each="offer : ${userOffers}">
+                    <td th:text="${offer.title}">Przeglad przedzakupowy</td>
+                    <td th:text="${offer.categoryName}">Motoryzacja</td>
+                    <td th:text="${offer.startDate}">2017-03-03 12:44</td>
+                    <td th:text="${offer.endDate}">2017-04-03 12:44</td>
+                    <td th:text="${offer.email}">peter@gmail.com</td>
+                    <td><a th:href="@{/offer/details/{id}(id=${offer.id})}" th:text="#{offer.goto}">Click</a></td>
+                    <td><a th:href="@{/offer/edit/{id}(id=${offer.id})}" th:text="#{offer.edit}">Edit</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div><!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+
+</div> <!-- /container -->
+
+</body>
+</html>

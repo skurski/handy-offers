@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head lang="en">
+    <!--/*/ <th:block th:include="fragments/template :: head"></th:block> /*/-->
+    <title>Handy offers</title>
+    <!--/*/ <th:block th:include="fragments/template :: scripts"></th:block> /*/-->
+</head>
+<body>
+
+<nav class="navbar navbar-inverse" th:replace="fragments/template :: header"></nav>
+
+<div class="container">
+    <!--/*/ <th:block th:include="fragments/template :: search"></th:block> /*/-->
+
+    <div class="clearfix"></div>
+
+    <div class="content">
+        <!--/*/ <th:block th:include="fragments/template :: usermenu"></th:block> /*/-->
+
+        <div th:classappend="${#authorization.expression('isAnonymous()')} ? col-md-12 : col-md-9">
+            <div th:if="${not #lists.isEmpty(offers)}">
+                <div th:each="offer : ${offers}" class="offer">
+                    <h2 th:text="${offer.title}">Heading</h2>
+                    <p th:text="${offer.content}">Description</p>
+
+                    <div class="col-md-4">
+                        <p>Address: <span th:text="${offer.getFullAddress()}"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p th:if="${not #strings.isEmpty(offer.distance)}"><span th:text="#{offer.distance}">Distance:</span>
+                            :&nbsp;<span th:text="${offer.distance}"></span> km
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><a class="btn btn-default" th:href="@{/offer/details/{id}(id=${offer.id})}"
+                              role="button" th:text="#{offer.link}"></a></p>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div> <!-- /content -->
+
+    <!--/*/ <th:block th:include="fragments/template :: footer"></th:block> /*/-->
+</div> <!-- /container -->
+
+</body>
+</html>
