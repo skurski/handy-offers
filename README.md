@@ -74,15 +74,6 @@
     - [http://localhost:8080/monitoring/trace](http://localhost:8080/monitoring/trace)
     - [http://localhost:8080/monitoring/shutdown](http://localhost:8080/monitoring/shutdown)
 
-#### TODO
-1. Walidacja
-2. Przesylanie danych przez AJAX
-3. Zapisywanie ulubionych wyszukiwan
-4. Zapisywanie ulubionych ofert
-5. Wiadomosc na maila jesli pojawia sie nowe wyniki dla zapisanych zapytan
-6. Email rejestracyjny
-7. Planowanie trasy po kilku ofertach (korzystanie z kilku ofert w kolejnosci)
-
 #### TECHNOLOGIES AND LIBRARIES
 - Spring Boot 1.5.2
     - Spring JPA (hibernate)
